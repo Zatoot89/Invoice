@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Create Invoice</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        <h2>Client & Dates</h2>
+        <p>
+            {{ form.client.label }}<br>
+            {{ form.client }}
+            {% for error in form.client.errors %}
+            <br><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.issue_date.label }}<br>
+            {{ form.issue_date(size=20) }}
+            {% for error in form.issue_date.errors %}
+            <br><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.due_date.label }}<br>
+            {{ form.due_date(size=20) }}
+            {% for error in form.due_date.errors %}
+            <br><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <hr>
+        <h2>Items</h2>
+        <table border="1" cellpadding="5" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th style="width:10%">Quantity</th>
+                    <th style="width:10%">Unit Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item_form in form.items %}
+                <tr>
+                    <td>
+                        {{ item_form.description(size=80) }}
+                        {% for error in item_form.description.errors %}
+                        <br><span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ item_form.quantity(size=10) }}
+                         {% for error in item_form.quantity.errors %}
+                        <br><span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ item_form.unit_price(size=10) }}
+                         {% for error in item_form.unit_price.errors %}
+                        <br><span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <hr>
+        <h2>Notes</h2>
+        <p>
+            {{ form.notes.label }}<br>
+            {{ form.notes(rows=5, cols=70) }}
+        </p>
+
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

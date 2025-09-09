@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Invoices</h1>
+    <p><a href="{{ url_for('invoice.create_invoice') }}">Create New Invoice</a></p>
+    <table border="1" cellpadding="5" style="width:100%">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Client</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.invoice_number }}</td>
+                <td>{{ invoice.client.name }}</td>
+                <td>{{ invoice.issue_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ invoice.due_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ "%.2f"|format(invoice.total) }}</td>
+                <td>{{ invoice.status.value|title }}</td>
+                <td>
+                    <a href="{{ url_for('invoice.view_invoice', invoice_id=invoice.id) }}">View</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No invoices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

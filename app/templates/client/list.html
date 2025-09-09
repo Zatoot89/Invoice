@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Clients</h1>
+    <p><a href="{{ url_for('client.add_client') }}">Add New Client</a></p>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.name }}</td>
+                <td>{{ client.email }}</td>
+                <td>
+                    <!-- Action links like edit/delete can go here later -->
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No clients found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

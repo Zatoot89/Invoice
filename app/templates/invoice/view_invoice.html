@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Invoice {{ invoice.invoice_number }}</h1>
+    <p><strong>Status:</strong> {{ invoice.status.value|title }}</p>
+
+    <hr>
+
+    <h2>Client Information</h2>
+    <p>
+        <strong>To:</strong> {{ invoice.client.name }}<br>
+        {{ invoice.client.email }}<br>
+        {% if invoice.client.address %}
+            {{ invoice.client.address|replace('\n', '<br>')|safe }}
+        {% endif %}
+    </p>
+
+    <h2>Invoice Details</h2>
+    <p>
+        <strong>Issue Date:</strong> {{ invoice.issue_date.strftime('%Y-%m-%d') }}<br>
+        <strong>Due Date:</strong> {{ invoice.due_date.strftime('%Y-%m-%d') }}
+    </p>
+
+    <hr>
+
+    <h2>Items</h2>
+    <table border="1" cellpadding="5" style="width:100%">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th style="width:10%">Quantity</th>
+                <th style="width:10%">Unit Price</th>
+                <th style="width:10%">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.items %}
+            <tr>
+                <td>{{ item.description }}</td>
+                <td style="text-align:right;">{{ "%.2f"|format(item.quantity) }}</td>
+                <td style="text-align:right;">{{ "%.2f"|format(item.unit_price) }}</td>
+                <td style="text-align:right;">{{ "%.2f"|format(item.total) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align:right;"><strong>Grand Total:</strong></td>
+                <td style="text-align:right;"><strong>{{ "%.2f"|format(invoice.total) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    {% if invoice.notes %}
+    <hr>
+    <h2>Notes</h2>
+    <p>{{ invoice.notes|replace('\n', '<br>')|safe }}</p>
+    {% endif %}
+
+    <hr>
+    <a href="{{ url_for('invoice.list_invoices') }}">Back to Invoices</a>
+{% endblock %}
