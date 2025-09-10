@@ -1,9 +1,10 @@
-from flask import render_template, redirect, url_for, flash, request, abort
+from flask import render_template, redirect, url_for, flash, request, abort, Response
 from flask_login import current_user, login_required
 from app.blueprints.invoice import invoice_bp
 from app.forms import InvoiceForm
 from app import db
 from app.models import Invoice, InvoiceItem, Client
+from app.utils import generate_invoice_pdf
 import datetime
 
 def get_next_invoice_number():
@@ -69,3 +70,18 @@ def view_invoice(invoice_id):
     if invoice.organization_id != current_user.organization_id:
         abort(403)
     return render_template('invoice/view_invoice.html', invoice=invoice, title=f'Invoice {invoice.invoice_number}')
+
+@invoice_bp.route('/invoices/<int:invoice_id>/pdf')
+@login_required
+def download_invoice_pdf(invoice_id):
+    invoice = Invoice.query.get_or_404(invoice_id)
+    if invoice.organization_id != current_user.organization_id:
+        abort(403)
+
+    pdf = generate_invoice_pdf(invoice)
+
+    return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": f"attachment;filename=invoice-{invoice.invoice_number}.pdf"}
+    )

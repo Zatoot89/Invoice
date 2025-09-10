@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Invoice {{ invoice.invoice_number }}</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Invoice {{ invoice.invoice_number }}</h1>
+        <p><a href="{{ url_for('invoice.download_invoice_pdf', invoice_id=invoice.id) }}" class="button">Download PDF</a></p>
+    </div>
     <p><strong>Status:</strong> {{ invoice.status.value|title }}</p>
 
     <hr>

@@ -8,3 +8,4 @@ Flask-Login
 Flask-WTF
 email-validator
 WTForms-SQLAlchemy
+WeasyPrint
