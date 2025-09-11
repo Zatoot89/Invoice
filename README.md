@@ -71,3 +71,39 @@ Follow these instructions to get the application running on your local machine f
     flask run
     ```
     The application will be available at `http://127.0.0.1:5000`.
+
+## Running in GitHub Codespaces
+
+Follow these steps to run the application inside a GitHub Codespace.
+
+1. **Create the Codespace**
+   * On the repository page, click **Code** → **Codespaces** → **Create codespace on main**.
+
+2. **Set up a virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Copy and edit environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Open `.env` in the editor and update the values as needed.
+
+5. **Run database migrations**
+   ```bash
+   export FLASK_APP=run.py
+   flask db upgrade
+   ```
+
+6. **Launch the development server**
+   ```bash
+   flask run --host=0.0.0.0 --port=5000
+   ```
+   The default forwarded port (5000) must be opened in the Codespaces interface to access the application.
