@@ -1,0 +1,11 @@
+Name,Email,Phone,Company,Address Line 1,Address Line 2,City,State,Postal Code,Country,Tax Number,Website,Payment Terms,Preferred Currency,Is Active,Notes,Tags
+John Smith,john.smith@acme.com,+1-555-0123,Acme Corporation,123 Business Ave,Suite 100,New York,NY,10001,USA,TAX123456,https://acme.com,30,USD,true,"VIP customer with priority support","vip,priority"
+Sarah Johnson,sarah@techsolutions.com,+1-555-0124,Tech Solutions Inc,456 Innovation Dr,,San Francisco,CA,94102,USA,TAX789012,https://techsolutions.com,15,USD,true,"Net 15 payment terms","technology,startup"
+Mike Davis,mike.davis@freelancer.com,+1-555-0125,Mike Davis Consulting,789 Freelance St,Apt 5B,Austin,TX,78701,USA,,https://mikedavis.com,30,USD,true,"Independent consultant","consulting,individual"
+Lisa Chen,lisa.chen@globaltech.com,+1-555-0126,Global Tech Ltd,321 International Blvd,,Seattle,WA,98101,USA,TAX345678,https://globaltech.com,45,USD,true,"Large enterprise client","enterprise,international"
+Robert Wilson,rwilson@startup.io,+1-555-0127,StartupIO,654 Venture Way,Floor 2,Boston,MA,02101,USA,TAX901234,https://startup.io,20,USD,true,"Fast-growing startup","startup,growth"
+Emily Brown,emily@designstudio.com,+1-555-0128,Creative Design Studio,987 Artist Lane,,Portland,OR,97201,USA,,https://designstudio.com,30,USD,true,"Creative agency client","design,creative"
+David Martinez,david@ecommerce.com,+1-555-0129,E-Commerce Plus,147 Online St,Building A,Miami,FL,33101,USA,TAX567890,https://ecommerce.com,25,USD,true,"E-commerce platform","ecommerce,online"
+Jennifer Taylor,jen@nonprofit.org,+1-555-0130,Community Nonprofit,258 Charity Ave,,Denver,CO,80201,USA,TAX234567,https://nonprofit.org,60,USD,true,"Non-profit organization","nonprofit,community"
+James Anderson,james@manufacturing.com,+1-555-0131,Anderson Manufacturing,369 Factory Rd,Plant 1,Detroit,MI,48201,USA,TAX678901,https://manufacturing.com,35,USD,true,"Manufacturing company","manufacturing,industrial"
+Maria Garcia,maria@consulting.com,+1-555-0132,Garcia Consulting Group,741 Advisory St,Suite 200,Chicago,IL,60601,USA,TAX345679,https://consulting.com,20,USD,true,"Management consulting","consulting,enterprise"

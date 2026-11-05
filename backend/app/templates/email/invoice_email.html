@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice {{ invoice.number }}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .email-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .email-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .email-body {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        .invoice-details {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .invoice-details h3 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+            font-size: 16px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .detail-value {
+            color: #1f2937;
+        }
+        .total-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #059669;
+        }
+        .custom-message {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+            transition: transform 0.2s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .email-body {
+                padding: 20px;
+            }
+            .detail-row {
+                flex-direction: column;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Invoice {{ invoice.number }}</h1>
+            <p>From {{ sender.company or sender.name }}</p>
+        </div>
+        
+        <div class="email-body">
+            <div class="greeting">
+                Hello {{ customer.name }},
+            </div>
+            
+            <p>
+                {% if custom_message %}
+                    {{ custom_message }}
+                {% else %}
+                    I hope this email finds you well. Please find attached your invoice for the services provided.
+                {% endif %}
+            </p>
+            
+            <div class="invoice-details">
+                <h3>Invoice Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Invoice Number:</span>
+                    <span class="detail-value">{{ invoice.number }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Issue Date:</span>
+                    <span class="detail-value">{{ invoice.issue_date }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Due Date:</span>
+                    <span class="detail-value">{{ invoice.due_date }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span class="detail-value total-amount">{{ invoice.total }}</span>
+                </div>
+            </div>
+            
+            {% if invoice.notes %}
+            <div style="margin: 20px 0;">
+                <h4 style="color: #1f2937; margin-bottom: 10px;">Additional Notes:</h4>
+                <p style="color: #6b7280; font-style: italic;">{{ invoice.notes }}</p>
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ invoice.view_url }}" class="cta-button">
+                    View & Pay Invoice Online
+                </a>
+            </div>
+            
+            <p>
+                If you have any questions about this invoice, please don't hesitate to contact me at 
+                <a href="mailto:{{ sender.email }}" style="color: #3b82f6;">{{ sender.email }}</a>.
+            </p>
+            
+            <p>
+                Thank you for your business!
+            </p>
+            
+            <p style="margin-top: 30px;">
+                Best regards,<br>
+                <strong>{{ sender.name }}</strong><br>
+                {% if sender.company %}{{ sender.company }}<br>{% endif %}
+                <a href="mailto:{{ sender.email }}" style="color: #3b82f6;">{{ sender.email }}</a>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>
+                <strong>InvoiceFlow Pro</strong> - Professional Invoice Management
+            </p>
+            <p>
+                This is an automated email. Please do not reply directly to this message.
+            </p>
+            <p>
+                &copy; {{ current_year }} InvoiceFlow Pro. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

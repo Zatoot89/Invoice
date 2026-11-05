@@ -1,0 +1,6 @@
+Name,Email,Phone,Company,Address Line 1,Address Line 2,City,State,Postal Code,Country,Tax Number,Website,Payment Terms,Preferred Currency,Is Active,Notes,Tags
+John Smith,john.smith@acme.com,+1-555-0123,Acme Corporation,123 Business Ave,Suite 100,New York,NY,10001,USA,TAX123456,https://acme.com,30,USD,true,"Valid customer","vip"
+,invalid-email,+1-555-0124,Tech Solutions Inc,456 Innovation Dr,,San Francisco,CA,94102,USA,TAX789012,https://techsolutions.com,15,USD,true,"Missing name and invalid email","error"
+Mike Davis,mike.davis@freelancer.com,+1-555-0125,,789 Freelance St,Apt 5B,Austin,TX,78701,USA,,https://mikedavis.com,invalid_terms,USD,true,"Invalid payment terms","consulting"
+Lisa Chen,lisa.chen@globaltech.com,+1-555-0126,Global Tech Ltd,321 International Blvd,,Seattle,WA,98101,USA,TAX345678,https://globaltech.com,45,INVALID_CURRENCY,maybe,"Invalid currency and boolean","enterprise"
+Good Customer,good@example.com,+1-555-0127,Good Company,123 Good St,,Good City,GS,12345,USA,,https://good.com,30,USD,true,"This is a valid customer","good"

@@ -1,109 +1,122 @@
-# SaaS Invoice Generator
+# InvoiceFlow Pro - Enhanced SaaS Invoice Generation Platform
 
-This is a SaaS invoice generation application built with Flask. It is designed for small to medium businesses that need professional invoicing capabilities.
+A next-generation, AI-powered invoice management platform that combines traditional invoicing with modern automation, predictive analytics, and seamless integrations.
 
-## Features
+## 🚀 Features
 
-This application currently includes the following core features:
+- **Advanced Invoice Management**: Recurring invoices, multi-currency support, partial payments
+- **AI-Powered Analytics**: Predictive insights and automated recommendations
+- **Enterprise Security**: End-to-end encryption, PCI DSS compliance, SOC 2 Type II
+- **Seamless Integrations**: Payment gateways, accounting software, CRM systems
+- **Real-time Collaboration**: Live notifications, team management, role-based access
 
-*   **Multi-Tenant Architecture**: Users are grouped by organizations, ensuring data is isolated between different companies.
-*   **User Authentication**: Secure user registration, login, and logout functionality.
-*   **Client Management**: Users can add and manage a list of their clients.
-*   **Invoice Management**:
-    *   Create new invoices with multiple line items.
-    *   View a list of all invoices.
-    *   View detailed information for a single invoice.
+## 🏗️ Architecture
 
-## Getting Started
+### Backend (FastAPI + PostgreSQL)
+```
+backend/
+├── app/
+│   ├── api/            # API routes and endpoints
+│   ├── core/           # Core configuration and security
+│   ├── models/         # Database models
+│   ├── services/       # Business logic
+│   ├── utils/          # Utility functions
+│   └── main.py         # FastAPI application entry point
+├── alembic/           # Database migrations
+├── tests/             # Backend tests
+└── requirements.txt   # Python dependencies
+```
 
-Follow these instructions to get the application running on your local machine for development and testing purposes.
+### Frontend (Next.js + TypeScript)
+```
+frontend/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/          # Next.js pages
+│   ├── hooks/          # Custom React hooks
+│   ├── services/       # API client services
+│   ├── utils/          # Utility functions
+│   └── types/          # TypeScript type definitions
+├── public/            # Static assets
+└── package.json       # Node.js dependencies
+```
+
+## 🛠️ Technology Stack
+
+### Backend
+- **FastAPI**: Modern async Python framework
+- **PostgreSQL 16**: Primary database with TimescaleDB extension
+- **Redis**: Caching and real-time features
+- **Celery + RabbitMQ**: Background task processing
+- **MinIO/S3**: Object storage for documents
+
+### Frontend
+- **Next.js 14**: React framework with SSR
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **Recharts/D3.js**: Data visualizations
+- **Socket.io**: Real-time communication
+
+### Security & Compliance
+- **OAuth 2.0/OIDC**: Authentication with social providers
+- **WebAuthn/Passkeys**: Passwordless authentication
+- **RBAC**: Role-based access control
+- **End-to-End Encryption**: Data protection
+- **PCI DSS**: Payment card compliance
+
+## 🚀 Quick Start
 
 ### Prerequisites
+- Python 3.12+
+- Node.js 18+
+- PostgreSQL 16
+- Redis
+- Docker (optional)
 
-*   Python 3.8+
-*   pip
+### Backend Setup
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-### Installation & Setup
+### Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+### Using Docker
+```bash
+docker-compose up -d
+```
 
-2.  **Create and activate a virtual environment:**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+## 📊 Development Status
 
-3.  **Install the dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+- [x] Project structure setup
+- [ ] Backend API foundation
+- [ ] Database schema and models
+- [ ] Authentication system
+- [ ] Invoice management core
+- [ ] Frontend application
+- [ ] Payment integrations
+- [ ] Analytics dashboard
+- [ ] Real-time features
+- [ ] Enterprise features
 
-4.  **Set up environment variables:**
-    Create a `.env` file in the project root by copying the example file:
-    ```bash
-    cp .env.example .env
-    ```
-    Now, open the `.env` file and set the following variables. For local development, you can use a simple secret key and a SQLite database.
+## 🤝 Contributing
 
-    ```
-    SECRET_KEY=a-super-secret-key-that-you-should-change
-    # For SQLite (development)
-    DATABASE_URL=sqlite:///app.db
+Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for details on our code of conduct and development process.
 
-    # For PostgreSQL (production)
-    # DATABASE_URL=postgresql://user:password@localhost/invoicer
-    ```
+## 📄 License
 
-5.  **Run database migrations:**
-    You need to set the `FLASK_APP` environment variable first.
-    ```bash
-    export FLASK_APP=run.py
-    flask db upgrade
-    ```
-    This will create the database file (if using SQLite) and all the necessary tables.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-6.  **Run the application:**
-    ```bash
-    flask run
-    ```
-    The application will be available at `http://127.0.0.1:5000`.
+## 🔗 Links
 
-## Running in GitHub Codespaces
-
-Follow these steps to run the application inside a GitHub Codespace.
-
-1. **Create the Codespace**
-   * On the repository page, click **Code** → **Codespaces** → **Create codespace on main**.
-
-2. **Set up a virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Copy and edit environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   Open `.env` in the editor and update the values as needed.
-
-5. **Run database migrations**
-   ```bash
-   export FLASK_APP=run.py
-   flask db upgrade
-   ```
-
-6. **Launch the development server**
-   ```bash
-   flask run --host=0.0.0.0 --port=5000
-   ```
-   The default forwarded port (5000) must be opened in the Codespaces interface to access the application.
+- [Documentation](docs/)
+- [API Reference](docs/api.md)
+- [Deployment Guide](docs/deployment.md)

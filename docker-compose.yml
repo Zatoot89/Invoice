@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: invoiceflow-postgres
+    environment:
+      POSTGRES_DB: invoiceflow_pro
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - invoiceflow-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: invoiceflow-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - invoiceflow-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: invoiceflow-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - invoiceflow-network
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: invoiceflow-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - invoiceflow-network
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: invoiceflow-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/invoiceflow_pro
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+      MINIO_URL: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - minio
+    volumes:
+      - ./backend:/app
+    networks:
+      - invoiceflow-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Celery Worker
+  celery-worker:
+    build: ./backend
+    container_name: invoiceflow-celery-worker
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/invoiceflow_pro
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    volumes:
+      - ./backend:/app
+    networks:
+      - invoiceflow-network
+    command: celery -A app.tasks worker --loglevel=info
+
+  # Celery Beat (Scheduler)
+  celery-beat:
+    build: ./backend
+    container_name: invoiceflow-celery-beat
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/invoiceflow_pro
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    volumes:
+      - ./backend:/app
+    networks:
+      - invoiceflow-network
+    command: celery -A app.tasks beat --loglevel=info
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: invoiceflow-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - invoiceflow-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: invoiceflow-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - invoiceflow-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+
+networks:
+  invoiceflow-network:
+    driver: bridge

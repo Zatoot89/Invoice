@@ -1,0 +1,38 @@
+INVOICE {{ invoice.number }}
+From: {{ sender.company or sender.name }}
+
+Hello {{ customer.name }},
+
+{% if custom_message %}
+{{ custom_message }}
+{% else %}
+I hope this email finds you well. Please find attached your invoice for the services provided.
+{% endif %}
+
+INVOICE DETAILS:
+================
+Invoice Number: {{ invoice.number }}
+Issue Date: {{ invoice.issue_date }}
+Due Date: {{ invoice.due_date }}
+Total Amount: {{ invoice.total }}
+
+{% if invoice.notes %}
+ADDITIONAL NOTES:
+================
+{{ invoice.notes }}
+{% endif %}
+
+You can view and pay this invoice online at: {{ invoice.view_url }}
+
+If you have any questions about this invoice, please don't hesitate to contact me at {{ sender.email }}.
+
+Thank you for your business!
+
+Best regards,
+{{ sender.name }}
+{% if sender.company %}{{ sender.company }}{% endif %}
+{{ sender.email }}
+
+---
+This email was sent by InvoiceFlow Pro - Professional Invoice Management
+© {{ current_year }} InvoiceFlow Pro. All rights reserved.

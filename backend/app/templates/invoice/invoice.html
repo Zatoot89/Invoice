@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Invoice {{ invoice.invoice_number or invoice.number or 'DRAFT' }}</title>
+  <style>{{ css_text }}</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="invoice-header">
+    <div class="org-info">
+      {% if org.logo_url or org.logo_data_url %}
+        <img src="{{ org.logo_url or org.logo_data_url }}" class="logo" alt="Logo"/>
+      {% endif %}
+      <h1>{{ org.company_name or org.name or user.company_name or (user.first_name ~ ' ' ~ user.last_name) or 'InvoiceFlow Pro' }}</h1>
+      {% if org.address or user.address %}
+        <div class="muted">{{ (org.address or user.address)|replace('\n','<br/>')|safe }}</div>
+      {% endif %}
+      {% if org.email or user.email %}
+        <div class="muted">Email: {{ org.email or user.email }}</div>
+      {% endif %}
+      {% if org.phone or user.phone %}
+        <div class="muted">Phone: {{ org.phone or user.phone }}</div>
+      {% endif %}
+      {% if org.tax_number %}
+        <div class="muted">Tax ID: {{ org.tax_number }}</div>
+      {% endif %}
+    </div>
+
+    <div class="invoice-meta">
+      <div class="invoice-title">INVOICE</div>
+      {% if invoice.status %}
+        <span class="status-badge status-{{ invoice.status|lower }}">{{ invoice.status }}</span>
+      {% endif %}
+      <div class="meta-grid">
+        <div class="meta-row">
+          <span class="meta-label">Invoice #:</span>
+          <span class="meta-value">{{ invoice.invoice_number or invoice.number or 'INV-DRAFT' }}</span>
+        </div>
+        {% if invoice.reference_number %}
+        <div class="meta-row">
+          <span class="meta-label">Ref / PO #:</span>
+          <span class="meta-value">{{ invoice.reference_number }}</span>
+        </div>
+        {% endif %}
+        <div class="meta-row">
+          <span class="meta-label">Issue Date:</span>
+          <span class="meta-value">{{ invoice.issue_date.strftime('%Y-%m-%d') if invoice.issue_date and invoice.issue_date.strftime is defined else invoice.issue_date }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Due Date:</span>
+          <span class="meta-value">{{ invoice.due_date.strftime('%Y-%m-%d') if invoice.due_date and invoice.due_date.strftime is defined else invoice.due_date }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Currency:</span>
+          <span class="meta-value">{{ invoice.currency or 'USD' }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Client & Payment QR Section -->
+  <section class="billing-section">
+    <div class="bill-to">
+      <h3>Billed To</h3>
+      <div class="client-name">{{ customer.name or 'Valued Customer' }}</div>
+      {% if customer.company and customer.company != customer.name %}
+        <div class="muted"><strong>{{ customer.company }}</strong></div>
+      {% endif %}
+      {% if customer.address_line_1 or customer.address %}
+        <div class="muted">
+          {{ customer.address_line_1 or customer.address }}
+          {% if customer.address_line_2 %}<br/>{{ customer.address_line_2 }}{% endif %}
+          {% if customer.city or customer.state or customer.postal_code %}
+            <br/>{{ [customer.city, customer.state, customer.postal_code]|select|join(', ') }}
+          {% endif %}
+          {% if customer.country %}<br/>{{ customer.country }}{% endif %}
+        </div>
+      {% endif %}
+      {% if customer.email %}
+        <div class="muted">Email: {{ customer.email }}</div>
+      {% endif %}
+      {% if customer.tax_number or customer.tax_id %}
+        <div class="muted">Tax / VAT ID: {{ customer.tax_number or customer.tax_id }}</div>
+      {% endif %}
+    </div>
+
+    {% if payment_qr %}
+    <div class="qr-container">
+      <img src="{{ payment_qr }}" alt="Payment QR Code"/>
+      <div class="qr-caption">Scan to Pay Online</div>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- Line Items Table -->
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th style="width: 45%;">Description</th>
+        <th class="right" style="width: 10%;">Qty</th>
+        <th class="right" style="width: 15%;">Unit Price</th>
+        <th class="right" style="width: 10%;">Tax Rate</th>
+        <th class="right" style="width: 20%;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>
+            <div class="item-desc">{{ item.description }}</div>
+            {% if item.sku or item.unit %}
+              <div class="item-subtext">
+                {% if item.sku %}SKU: {{ item.sku }} {% endif %}
+                {% if item.unit %}({{ item.unit }}){% endif %}
+              </div>
+            {% endif %}
+          </td>
+          <td class="right">{{ '%.2f' % (item.quantity|float) }}</td>
+          <td class="right">{{ '%.2f' % (item.unit_price|float) }}</td>
+          <td class="right">
+            {% if item.tax_rate and item.tax_rate|float > 0 %}
+              {{ '%.1f%%' % (item.tax_rate|float * (100 if item.tax_rate|float <= 1 else 1)) }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td class="right">{{ '%.2f' % (item.total|float if item.total is defined else ((item.quantity|float) * (item.unit_price|float))) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Totals Section -->
+  <div class="summary-container">
+    <table class="totals-table">
+      <tr>
+        <td>Subtotal</td>
+        <td class="right">{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.subtotal|float) }}</td>
+      </tr>
+      {% if invoice.discount_amount and invoice.discount_amount|float > 0 %}
+      <tr>
+        <td>Discount</td>
+        <td class="right">-{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.discount_amount|float) }}</td>
+      </tr>
+      {% endif %}
+      {% if invoice.tax_amount and invoice.tax_amount|float > 0 %}
+      <tr>
+        <td>Estimated Tax</td>
+        <td class="right">{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.tax_amount|float) }}</td>
+      </tr>
+      {% endif %}
+      <tr class="grand-total">
+        <td>Total Due</td>
+        <td class="right">{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.total|float) }}</td>
+      </tr>
+      {% if invoice.amount_paid and invoice.amount_paid|float > 0 %}
+      <tr>
+        <td>Amount Paid</td>
+        <td class="right">-{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.amount_paid|float) }}</td>
+      </tr>
+      <tr class="due-row">
+        <td>Remaining Balance Due</td>
+        <td class="right">{{ invoice.currency or 'USD' }} {{ '%.2f' % (invoice.amount_due|float) }}</td>
+      </tr>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- Notes & Terms -->
+  {% if invoice.notes %}
+  <section class="extra-section">
+    <h4>Notes</h4>
+    <div class="muted">{{ invoice.notes|replace('\n','<br/>')|safe }}</div>
+  </section>
+  {% endif %}
+
+  {% if invoice.terms_and_conditions or invoice.terms %}
+  <section class="extra-section">
+    <h4>Terms & Instructions</h4>
+    <div class="muted">{{ (invoice.terms_and_conditions or invoice.terms)|replace('\n','<br/>')|safe }}</div>
+  </section>
+  {% endif %}
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div>{{ invoice.footer_text or 'Thank you for your business!' }}</div>
+    <div>Powered by InvoiceFlow Pro</div>
+  </footer>
+
+</body>
+</html>
